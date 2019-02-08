@@ -1,26 +1,32 @@
-setwd("~/Desktop/deconvolution methylation")
+rm(list=ls())
+
 library(reshape2)
 library(ggplot2)
 
-md.full <- read.csv("lung_meth.txt", sep = "\t")
+md.full <- read.csv("data/lung_meth.txt", sep = "\t")
 # Remove sites not contributing to leukocytes vs epithelial cells.
 md<- md.full[! (is.na(md.full$leuckocytes) | is.na(md.full$lung.epithelial)), ]
 
 # Group data into dataframes 
 data.methylated <- md[,grepl("\\.meth",colnames(md))]
 data.methylated[is.na(data.methylated)]<-0
+
 data.unmethylated <- md[,grepl("\\.unmeth",colnames(md))]
 data.unmethylated[is.na(data.unmethylated)]<-0
 
 all.methylation.types <-  c("leuckocytes" , "lung.epithelial" , "health.lung.cfna" 
                             , "Pulmonary.endothelial.cells", "pulmonary.fibroblasts" )
-target.cell.types <- c("lung.epithelial","leuckocytes" , "Pulmonary.endothelial.cells","pulmonary.fibroblasts"  )
+target.cell.types <- c("lung.epithelial","leuckocytes" , "Pulmonary.endothelial.cells","pulmonary.fibroblasts", "health.lung.cfna"  )
 probs<-md[,target.cell.types]
-probs[is.na(probs)]<-0
+probs[is.na(probs)]<-1
 
 # Fit a linear model
 fit <- lm (as.matrix(data.methylated) ~ probs[,1]+probs[,2]+probs[,3]+probs[,4])
+coef(fit)
+prop.table(coef(fit), 2)
+
 x<-round(prop.table(coef(fit),2),5)[(-1),]
+x
 out <-t(x)
 rownames(x)<- target.cell.types
 colnames(x)<-names(data.methylated)
@@ -28,6 +34,8 @@ print(x)
 
 # Alternatively optimize to minimize sum of squares. Error is worse and this is slower.
 z<- c()
+
+data
 for (i in 1:ncol(data.methylated)){
   opt.fn <- function (X){
     methylated.vals <- t( X %*%t(probs))
@@ -37,6 +45,7 @@ for (i in 1:ncol(data.methylated)){
                 , na.rm = T) * (1+sum(X<0))) # Include error term for values <0
   }
   opt <- optim( rep(.25,ncol(probs)), opt.fn)
+  probs
   z<- rbind(z, opt$par)
 }
 z <- round(prop.table(z,margin = 1),digits = 5)
@@ -45,7 +54,7 @@ rownames(z)<-substr(colnames(data.methylated), 1,6)
 colnames(z)<-target.cell.types
 print (z)
 
-###  Estimate error versus coverage using linear model ###
+               ###  Estimate error versus coverage using linear model ###
 # This takes a while... #
 
 md<- md.full[! (is.na(md.full$leuckocytes) | is.na(md.full$lung.epithelial)), ]
@@ -61,11 +70,12 @@ simulated.dist <- matrix(c(1,0,0,0,
                            0,1,0,0,
                            0,.5,0,.5,
                            .15,.5,.15,.2),ncol = n.samples, byrow = T)
+simulated.dist
 colnames(simulated.dist) <- target.cell.types
 rownames(simulated.dist) <- samples 
 
 predicted.values <- t(simulated.dist%*%t(probs))
-
+predicted.values
 out <- c()
 for (per.snp in 5*runif(500)){
   test.data.methylated <- apply(predicted.values, 1:2, function(X) rpois(1, per.snp*X))

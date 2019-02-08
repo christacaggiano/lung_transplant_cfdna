@@ -1,10 +1,67 @@
 rm(list=ls())
-setwd("~/Desktop/zaitlen_lab_desktop/")
+setwd("~/Documents/UCSF_year2/research/lung_transplant/data")
 
-df1 = read.table("140363_allele_counts.txt", sep = "\t", header=F)
+df1 = read.table("140287_allele_counts.txt", sep = "\t", header=F)
 names(df1) = c("CHR", "START", "END", "ALLELE", "DONOR", "RECIP", "A", "B", "OTHER")
 
-sum(df1$B)
+
+df1_hom = subset(df1, df1$DONOR ==2 & df1$RECIP==0)
+sum(df1_hom$B)
+sum(df1_hom$A)
+sum(df1_hom$B)/(sum(df1_hom$B) + sum(df1_hom$A))
+(sum(df1_hom$B) + sum(df1_hom$A) + sum(df1_hom$OTHER))/nrow(df1_hom)
+
+df1_hom = subset(df1, df1$DONOR ==1 & df1$RECIP==0)
+sum(df1_hom$B)
+sum(df1_hom$A)
+sum(df1_hom$B)/(sum(df1_hom$B) + sum(df1_hom$A))
+(sum(df1_hom$B) + sum(df1_hom$A) + sum(df1_hom$OTHER))/nrow(df1_hom)
+
+df1_hom = subset(df1, df1$DONOR ==1 & df1$RECIP==2)
+sum(df1_hom$B)
+sum(df1_hom$A)
+sum(df1_hom$A)/(sum(df1_hom$B) + sum(df1_hom$A))
+(sum(df1_hom$B) + sum(df1_hom$A) + sum(df1_hom$OTHER))/nrow(df1_hom)
+
+df1_hom = subset(df1, df1$DONOR==0 & df1$RECIP==2)
+sum(df1_hom$B)
+sum(df1_hom$A)
+sum(df1_hom$A)/(sum(df1_hom$B) + sum(df1_hom$A))
+(sum(df1_hom$B) + sum(df1_hom$A) + sum(df1_hom$OTHER))/nrow(df1_hom)
+
+df1_hom = subset(df1, df1$DONOR==0 & df1$RECIP==0)
+sum(df1_hom$B)
+sum(df1_hom$A)
+sum(df1_hom$A)/(sum(df1_hom$B) + sum(df1_hom$A))
+(sum(df1_hom$B) + sum(df1_hom$A))/nrow(df1_hom)
+
+df1_hom = subset(df1, df1$DONOR==2 & df1$RECIP==2)
+sum(df1_hom$B)
+sum(df1_hom$A)
+nrow(df1_hom)
+sum(df1_hom$B)/(sum(df1_hom$B) + sum(df1_hom$A))
+(sum(df1_hom$B) + sum(df1_hom$A)/nrow(df1_hom)
+
+df1_hom = subset(df1, df1$DONOR==1 & df1$RECIP==1)
+sum(df1_hom$B)
+sum(df1_hom$A)
+
+sum(df1_hom$B)/(sum(df1_hom$B) + sum(df1_hom$A))
+(sum(df1_hom$B) + sum(df1_hom$A) + sum(df1_hom$OTHER))/nrow(df1_hom)
+
+
+
+df1_het = subset(df1, df1$RECIP==0)
+sum(df1_het$A)
+sum(df1_het$B)
+sum(df1_het$OTHER)
+
+
+df1_het = subset(df1, df1$RECIP==2)
+sum(df1_het$A)
+sum(df1_het$B)
+sum(df1_het$OTHER)
+
 
 df1$REF_FRAC = df1$A/(df1$A + df1$B + df1$OTHER)
 df1$total_count = df1$A + df1$B + df1$OTHER
@@ -36,6 +93,5 @@ hom_incorrect = homA_incorrect + homB_incorrect
 
 (2*(hetB) + hom_correct)/(hetA+hetB+hom_correct+hom_incorrect)
 
-(sum(df1$OTHER))/(hetA+hetB+hom_correct+hom_incorrect)
 
 
