@@ -1,7 +1,7 @@
 rm(list=ls())
-setwd("~/Documents/UCSF_year2/research/lung_transplant/data")
+setwd("~/Desktop/zaitlen_lab_desktop/")
 
-df1 = read.table("140287_allele_counts.txt", sep = "\t", header=F)
+df1 = read.table("140363_allele_counts_fwd.txt", sep = "\t", header=F)
 names(df1) = c("CHR", "START", "END", "ALLELE", "DONOR", "RECIP", "A", "B", "OTHER")
 
 
@@ -40,9 +40,16 @@ sum(df1_hom$B)
 sum(df1_hom$A)
 nrow(df1_hom)
 sum(df1_hom$B)/(sum(df1_hom$B) + sum(df1_hom$A))
-(sum(df1_hom$B) + sum(df1_hom$A)/nrow(df1_hom)
+(sum(df1_hom$B) + sum(df1_hom$A))/nrow(df1_hom)
 
 df1_hom = subset(df1, df1$DONOR==1 & df1$RECIP==1)
+sum(df1_hom$B)
+sum(df1_hom$A)
+
+sum(df1_hom$B)/(sum(df1_hom$B) + sum(df1_hom$A))
+(sum(df1_hom$B) + sum(df1_hom$A) + sum(df1_hom$OTHER))/nrow(df1_hom)
+
+df1_hom = subset(df1, df1$DONOR==0 & df1$RECIP==1)
 sum(df1_hom$B)
 sum(df1_hom$A)
 

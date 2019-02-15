@@ -1,8 +1,8 @@
 rm(list=ls())
 setwd("~/Documents/UCSF_year2/research/lung_transplant/")
 
-install.packages("data.table")
-BiocManager::install("biomaRt", version = "3.8")
+# install.packages("data.table")
+# BiocManager::install("biomaRt", version = "3.8")
 
 require(data.table)
 require(biomaRt)
